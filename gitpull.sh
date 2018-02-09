@@ -1,5 +1,14 @@
 #!/bin/bash
 
+Variables() {
+  read -p "Enter a git link for the TorQ repository you wish to clone or leave blank for default: " torq
+  torq=${torq:-https://github.com/AquaQAnalytics/TorQ.git}
+  echo "The TorQ respository will come from $torq"
+  read -p "Enter a git link for the TorQ FSP repository you wish to clone or leave blank for default: " torqfsp
+  torqfsp=${torqfsp:-https://github.com/AquaQAnalytics/TorQ-Finance-Starter-Pack.git}
+  echo "The TorQ FSP respository will come from $torqfsp"
+ }
+
 VersionCheck() {
   while true;do
 	read -p "Enter the version number you would like to pull: " version
@@ -8,10 +17,6 @@ VersionCheck() {
 	fi
   done
  }
-
-
-#BP=https://github.com/AquaQAnalytics/TorQ.git
-#FSP=https://github.com/AquaQAnalytics/TorQ-Finance-Starter-Pack.git
 
 Directory() {
   if [ ! -d v$version ];then
@@ -24,23 +29,38 @@ Directory() {
 }
 
 Navigate() {
-  BP=https://github.com/AquaQAnalytics/TorQ.git
-  FSP=https://github.com/AquaQAnalytics/TorQ-Finance-Starter-Pack.git
+  navcheck=0
   base=`pwd`/$newdir
   cd $base
-  git clone $BP
-  git clone $FSP
-  cd `pwd`/TorQ-Finance-Starter-Pack
+  git clone $torq || echo "git clone for $torq has failed"
+  let "navcheck+=$?"
+  git clone $torqfsp || echo "git clone for $torq has failed"
+  let "navcheck+=$?"
+  cd `pwd`/TorQ-Finance-Starter-Pack 
   git checkout v$version
+  let "navcheck+=$?"
+  if [[ ! $navcheck -eq 0 ]]
+  then
+	echo "Failure to clone repositories, script will now exit."
+	exit 0
+  fi
   cd $base
-  mkdir deploy
-  cp -R `pwd`/TorQ/* deploy/
-  cp -R `pwd`/TorQ-Finance-Starter-Pack/* deploy/
+  while true;do
+	read -p "Enter the name of directory you want to run the combined TorQ packages in, default is deploy: " direc
+  	direc=${direc:-deploy}
+	if [[ ! -d $direc ]];then
+		break
+	else
+		echo "Directory exists, enter a different name"
+	fi
+  done
+  mkdir $direc
+  cp -R `pwd`/TorQ/* $direc/
+  cp -R `pwd`/TorQ-Finance-Starter-Pack/* $direc/
  }
 
 
-
-
+Variables
 VersionCheck
 Directory
 Navigate
