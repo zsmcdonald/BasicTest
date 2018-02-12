@@ -1,19 +1,49 @@
 #!/bin/bash
 
+Usage() {
+  if [[ $1 -eq "-u" ]];then
+	echo "This is the usage script"
+  	exit 0
+  fi
+ }
+
+Colour() { 
+  RED='\033[0;31m'
+  NC='\033[0m'
+  GREEN='\033[0;32m'
+ }
+
+err_report() {
+  echo -e "${RED}Error on line $1${NC}"
+  exit 0
+ }
+
+trap 'err_report $LINENO' ERR
+
 Variables() {
-  read -p "Enter a git link for the TorQ repository you wish to clone or leave blank for default: " torq
-  torq=${torq:-https://github.com/AquaQAnalytics/TorQ.git}
-  echo "The TorQ respository will come from $torq"
-  read -p "Enter a git link for the TorQ FSP repository you wish to clone or leave blank for default: " torqfsp
-  torqfsp=${torqfsp:-https://github.com/AquaQAnalytics/TorQ-Finance-Starter-Pack.git}
-  echo "The TorQ FSP respository will come from $torqfsp"
+  while true;do
+	read -p "Enter a git link for the TorQ repository you wish to clone or leave blank for default: " torq
+	torq=${torq:-https://github.com/AquaQAnalytics/TorQ.git}
+	if [[ $torq == *.git ]];then
+	  break
+	fi
+  done
+  echo -e "The TorQ respository will come from ${GREEN}$torq${NC}"
+  while true;do
+	read -p "Enter a git link for the TorQ FSP repository you wish to clone or leave blank for default: " torqfsp
+	torqfsp=${torqfsp:-https://github.com/AquaQAnalytics/TorQ-Finance-Starter-Pack.git}
+	if [[ $torqfsp == *.git ]];then
+	  break
+	fi
+  done
+  echo -e "The TorQ FSP respository will come from ${GREEN}$torqfsp${NC}"
  }
 
 VersionCheck() {
   while true;do
-	read -p "Enter the version number you would like to pull: " version
+	read -p "Enter the version number you would like to pull, default is 1.5.0: " version
 	if [[ $version == *.*.* ]] && [[ $version =~ ^[0-9]+(\.[0-9]+)+(\.[0-9]+)?$ ]];then
-		break
+	  break
 	fi
   done
  }
@@ -32,9 +62,9 @@ Navigate() {
   navcheck=0
   base=`pwd`/$newdir
   cd $base
-  git clone $torq || echo "git clone for $torq has failed"
+  git clone $torq
   let "navcheck+=$?"
-  git clone $torqfsp || echo "git clone for $torq has failed"
+  git clone $torqfsp
   let "navcheck+=$?"
   cd `pwd`/TorQ-Finance-Starter-Pack 
   git checkout v$version
@@ -58,8 +88,8 @@ Navigate() {
   cp -R `pwd`/TorQ/* $direc/
   cp -R `pwd`/TorQ-Finance-Starter-Pack/* $direc/
  }
-
-
+Usage
+Colour
 Variables
 VersionCheck
 Directory
