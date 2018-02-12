@@ -1,24 +1,18 @@
 #!/bin/bash
 
-Usage() {
-  if [[ $1 -eq "-u" ]];then
-	echo "This is the usage script"
-  	exit 0
-  fi
- }
-
 Colour() { 
   RED='\033[0;31m'
   NC='\033[0m'
   GREEN='\033[0;32m'
  }
 
-err_report() {
-  echo -e "${RED}Error on line $1${NC}"
-  exit 0
+Usage() {
+  echo $1
+  case $1 in 
+       "-u") printf "\n${RED}This script will download the TorQ basepack and TorQ Finance Starter Pack at specific version releases.\nTo leave variables as defaults, leave entries blank.${NC}\nDefaults in this script that can be changed are as follows:\nTorQ repository from: ${GREEN}https://github.com/AquaQAnalytics/TorQ.git${NC}\nTorQ FSP repository from: ${GREEN}https://github.com/AquaQAnalytics/TorQ-Finance-Starter-Pack.git${NC}\nDefault release version for TorQ: ${GREEN}3.1.2${NC}\nDefault release version for TorQ FSP: ${GREEN}1.5.0${NC}\nDefault directory both repositories they will be cloned from: ${GREEN}deploy${NC}\n\n";exit 0;;
+       *);;
+  esac
  }
-
-trap 'err_report $LINENO' ERR
 
 Variables() {
   while true;do
@@ -41,16 +35,17 @@ Variables() {
 
 VersionCheck() {
   while true;do
-	read -p "Enter the version number you would like to pull, default is 1.5.0: " version
-	if [[ $version == *.*.* ]] && [[ $version =~ ^[0-9]+(\.[0-9]+)+(\.[0-9]+)?$ ]];then
+	read -p "Enter the version number you would like to pull for TorQ FSP, default is 1.5.0: " versionfsp
+	versionfsp=${versionfsp:-1.5.0}
+	if [[ $versionfsp == *.*.* ]] && [[ $versionfsp =~ ^[0-9]+(\.[0-9]+)+(\.[0-9]+)?$ ]];then
 	  break
 	fi
   done
  }
 
 Directory() {
-  if [ ! -d v$version ];then
-	newdir="v$version"
+  if [ ! -d v$versionfsp ];then
+	newdir="v$versionfsp"
 	echo "$newdir"
 	mkdir "$newdir"
 	else echo "Directory v$version already exists"
@@ -67,11 +62,12 @@ Navigate() {
   git clone $torqfsp
   let "navcheck+=$?"
   cd `pwd`/TorQ-Finance-Starter-Pack 
-  git checkout v$version
+  git checkout v$versionfsp
   let "navcheck+=$?"
   if [[ ! $navcheck -eq 0 ]]
   then
 	echo "Failure to clone repositories, script will now exit."
+	rm -rf $newdir
 	exit 0
   fi
   cd $base
@@ -88,8 +84,16 @@ Navigate() {
   cp -R `pwd`/TorQ/* $direc/
   cp -R `pwd`/TorQ-Finance-Starter-Pack/* $direc/
  }
-Usage
+
+err_report() {
+  echo -e "${RED}Error on line $1${NC}"
+  exit 0
+ }
+
+trap 'err_report $LINENO' ERR
+
 Colour
+Usage $1
 Variables
 VersionCheck
 Directory
