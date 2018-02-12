@@ -1,0 +1,44 @@
+Wed 20 Dec 15:01:34 GMT 2017
+Tables from homer at port 3003 contain numbers of entries as follows
+There are no tables to be found at homer port number 3003.
+Wed 20 Dec 15:01:41 GMT 2017
+Tables from homer at port 3003 contain numbers of entries as follows
+There are no tables to be found at homer port number 3003.
+Wed 20 Dec 15:01:47 GMT 2017
+Tables from homer at port 5016 contain numbers of entries as follows
+quote     2656849
+tab       100    
+trade     561683 
+Wed 20 Dec 15:01:50 GMT 2017
+Tables from homer at port 3003 contain numbers of entries as follows
+There are no tables to be found at homer port number 3003.
+Wed 20 Dec 15:01:52 GMT 2017
+Tables from homer at port 5016 contain numbers of entries as follows
+quote     2657519
+tab       100    
+trade     561777 
+Wed 20 Dec 15:02:00 GMT 2017
+Tables from homer at port 5016 contain numbers of entries as follows
+quote     2658210
+tab       100    
+trade     561919 
+Wed 20 Dec 15:02:01 GMT 2017
+Tables from homer at port 5016 contain numbers of entries as follows
+quote     2658257
+tab       100    
+trade     561949 
+Wed 20 Dec 15:02:02 GMT 2017
+Tables from homer at port 5016 contain numbers of entries as follows
+quote     2658360
+tab       100    
+trade     561949 
+Wed 20 Dec 15:02:03 GMT 2017
+Tables from homer at port 5016 contain numbers of entries as follows
+quote     2658437
+tab       100    
+trade     561964 
+Wed 20 Dec 15:02:03 GMT 2017
+Tables from homer at port 5016 contain numbers of entries as follows
+quote     2658598
+tab       100    
+trade     561964 

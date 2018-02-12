@@ -1,0 +1,7 @@
+Subject: RTD Update
+The status of the RTD at homer port number 5016 has been updated please see details below.
+Wed 20 Dec 15:02:03 GMT 2017
+Tables from homer at port 5016 contain numbers of entries as follows
+quote     2658598
+tab       100    
+trade     561964 
