@@ -104,6 +104,10 @@ err_report() {
   exit 0
  }
 
+Softlink() {
+  ln -s $base torq
+ }
+
 trap 'err_report $LINENO' ERR
 
 #Colour
@@ -112,3 +116,4 @@ trap 'err_report $LINENO' ERR
 #VersionCheck
 #Directory
 #Navigate
+#Softlink
