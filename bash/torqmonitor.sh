@@ -7,7 +7,7 @@ Colour() {
  }
 
 Comparison() {
- printf "This is a file that contains the relevant TorQ Processes, it is called upon when a TorQ process is not found during comparison checks.\nThe tickerplant process is no longer running.\nThe rdb process is no longer running.\nThe hdb1 process is no longer running.\nThe hdb2 process is no longer running.\nThe gateway process is no longer running.\nThe monitor process is no longer running.\nThe reporter process is no longer running.\nThe housekeeping process is no longer running.\nThe wdb1 process is no longer running.\nThe wdb2 process is no longer running.\nThe feed process is no longer running.\nThe iexfeed process is no longer running.\nThe wdb3 process is no longer running.\nThe wdb4 process is no longer running.\nThe metrics process is no longer running.\n" >Torqprocs.txt
+ printf "This is a file that contains the relevant TorQ Processes, it is called upon when a TorQ process is not found during comparison checks.\nThe discovery service process is no longer running.\nThe tickerplant process is no longer running.\nThe rdb process is no longer running.\nThe chained tickerplant process is no longer running.\nThe hdb1 process is no longer running.\nThe hdb2 process is no longer running.\nThe gateway process is no longer running.\nThe monitor process is no longer running.\nThe reporter process is no longer running.\nThe housekeeping process is no longer running.\nThe wdb1 process is no longer running.\nThe wdb2 process is no longer running.\nThe feed process is no longer running.\nThe iexfeed process is no longer running.\nThe wdb3 process is no longer running.\nThe wdb4 process is no longer running.\nThe metrics process is no longer running.\n" >Torqprocs.txt
  }
 
 User() {
@@ -32,6 +32,7 @@ Sleepvar() {
     fi
   done
   echo -e  "Sleep time set as ${GREEN}$sleepsec${NC} seconds, number cycles set as ${GREEN}$cycle${NC}"
+  rm -f trqdetail*
  } 
 
 Email() {
@@ -48,25 +49,29 @@ Email() {
  }
 
 TorQMonitor() {
-ps -aux | grep $user | grep "q.*torq" | awk '{print $2}' | xargs ps -o user,pid,stime,stat,cmd > trqdetails.txt
-countline=`cat trqdetails.txt | wc -l`
+  ps -aux | grep $user | grep "q.*torq" | awk '{for(i=0;i<NF;i++) if ($i=="-procname") print $(i+1)}' > trqdetails.txt
+  time=`ps -aux | grep $user | grep "q.*torq" | sed -n "1p" | awk '{print $9}'`
+  countline=`cat trqdetails.txt | wc -l`
   if [[ $countline -eq 1  ]];then
     echo "No TorQ processes running for $user" > trqdetails.txt
     mail -s "TorQ Details" "$email" < trqdetails.txt
     echo -e "${RED}No TorQ processes found, an email alerting the user has been sent. Script will now exit as there is nothing to monitor.${NC}"
+    rm -f trqdetail*
     exit 0
-  elif [[ $countline -lt 15 ]];then
+  elif [[ $countline -lt 10 ]];then
     echo "A TorQ Process has failed, consult TorQ log files. Script will now exit"
     exit 0
   else
     for((i=0;i<=5;i++));do
     echo $i
     sleep 5 
-    ps -aux | grep $user | grep "q.*torq" | awk '{print $2}' | xargs ps -o user,pid,stime,stat,cmd > trqdetails$i.txt
+    ps -aux | grep $user | grep "q.*torq" | awk '{for(i=0;i<NF;i++) if ($i=="-procname") print $(i+1)}' >  trqdetails$i.txt
     change=`grep -n -v -f trqdetails$i.txt trqdetails.txt | cut -d ':' -f 1 | awk '{printf "%sp;", $0}' | head -c-1`
+    echo $change
     if  [[ $change != "" ]];then
-      sed -n "$change" Torqprocs.txt > trqdetails99.txt
-      echo "The processes listed above failed at `date`" >> trqdetails99.txt
+      printf "The following process(es) have failed.\n" > trqdetails99.txt
+      sed -n "$change" trqdetails.txt >> trqdetails99.txt
+      printf "The processes listed above were started at $time and failed at `date`" >> trqdetails99.txt
       mail -s "TorQ Process Failure" "$email" < trqdetails99.txt
       echo "TorQ Process Failure(s) detected, exiting script."
       exit 0

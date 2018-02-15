@@ -2,8 +2,8 @@
 . ./setenv.sh
 
 # sets the base port for a default TorQ installation
-export KDBHDB=${TORQHOME}/hdb/database
-export KDBWDB=${TORQHOME}/wdbhdb
+export KDBHDB=${PWD}/../hdb/database
+export KDBWDB=${PWD}/../wdbhdb
 export KDBSTACKID="-stackid ${KDBBASEPORT}"
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$KDBLIB/l32
 
@@ -80,4 +80,4 @@ nohup q ${TORQHOME}/torq.q -load ${TORQHOME}/code/processes/wdb.q ${KDBSTACKID} 
 
 # launch metrics
 echo 'Stating metrics...'
-nohup q ${TORQHOME}/torq.q -load ${TORQHOME}/code/processes/metrics.q ${KDBSTACKID} -proctype metrics -procname metrics1 -U appconfig/passwords/accesslist.txt -localtime -g 1 </dev/null >$KDBLOG/torqmetrics.txt 2>&1 &
+nohup q ${TORQHOME}/torq.q -load ${KDBTORQFSP}/code/processes/metrics.q ${KDBSTACKID} -proctype metrics -procname metrics1 -U ${KDBAPPCONFIG}/passwords/accesslist.txt -localtime -g 1 </dev/null >$KDBLOG/torqmetrics.txt 2>&1 &

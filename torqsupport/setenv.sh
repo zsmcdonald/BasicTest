@@ -3,12 +3,13 @@
 export TORQHOME=${PWD}/TorQ
 export KDBCONFIG=${TORQHOME}/config
 export KDBCODE=${TORQHOME}/code
-export KDBLOG=${PWD}/logs
+export KDBLOG=${PWD}/../logs
 export KDBHTML=${TORQHOME}/html
 export KDBLIB=${TORQHOME}/lib
 
 #Sets the application specific configuration directory
 export KDBAPPCONFIG=${PWD}/TorQ-Finance-Starter-Pack/appconfig
+export KDBAPPCODE=${PWD}/TorQ-Finance-Starter-Pack/code
 export KDBTORQFSP=${PWD}/TorQ-Finance-Starter-Pack
 #set KDBBASEPORT to the default value for a TorQ Installation
 export KDBBASEPORT=16400
@@ -20,10 +21,10 @@ export KDBBASEPORT=16400
 
 touch $KDBLOG/torqsslcert.txt
 if [ -z "${SSL_CA_CERT_FILE}" ]; then
-	mkdir ${PWD}/certs
-	curl -s  https://curl.haxx.se/ca/cacert.pm > ${PWD}/certs/cabundle.pem
+	mkdir $TORQHOME/certs
+	curl -s  https://curl.haxx.se/ca/cacert.pm > $TORQHOME/certs/cabundle.pem
 	echo "`date`    The SSL securiity certificate has been downloaded to ${PWD}/certs/cabundle.pem" </dev/null >>$KDBLOG/torqsslcert.txt 
-	export SSL_CA_CERT_FILE=${PWD}/certs/cabundle.pem
+	export SSL_CA_CERT_FILE=$TORQHOME/certs/cabundle.pem
 else
 	echo "`date`    The SSL security certificate already exists. If https requests fail it may be because of inappropriate certification." </dev/null >>$KDBLOG/torqsslcert.txt 
 fi

@@ -9,4 +9,5 @@ Variables
 VersionCheck
 Directory
 Navigate
-
+Softlink
+StartScript
