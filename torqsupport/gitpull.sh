@@ -14,20 +14,20 @@ Usage() {
  }
 
 Variables() {
-  while true;do
-    while true;do 
-      read -p "Enter your username to create a prodsupport directory within your home directory: " userdir
-      if [ -z $userdir ];then
-        echo -e "${RED}Do not leave userdirectory blank!${NC}"
-        else break
-      fi
-    done
-    cd  /home/$userdir
-    if [[ $? -eq 0 ]];then
-      break
-    else echo -e "${RED}User home directory not recognised, try again.${NC}"
-    fi
-  done
+#  while true;do
+#    while true;do 
+#      read -p "Enter your username to create a prodsupport directory within your home directory: " userdir
+#      if [ -z $userdir ];then
+#        echo -e "${RED}Do not leave userdirectory blank!${NC}"
+#        else break
+#      fi
+#    done
+#    cd  /home/$userdir
+#    if [[ $? -eq 0 ]];then
+#      break
+#    else echo -e "${RED}User home directory not recognised, try again.${NC}"
+#    fi
+#  done
   while true;do
     read -p "Enter a git link for the TorQ repository you wish to clone or leave blank for default: " torq
     torq=${torq:-https://github.com/AquaQAnalytics/TorQ.git}
@@ -122,6 +122,7 @@ echo `pwd`
 	echo "Directory exists, enter a different name"
     fi
   done
+  cd $base
   mkdir $direc
   cp -R $base/TorQ/* $direc/
   cp -R $base/TorQ-Finance-Starter-Pack/* $direc/
