@@ -15,6 +15,20 @@ Usage() {
 
 Variables() {
   while true;do
+    while true;do 
+      read -p "Enter your username to create a prodsupport directory within your home directory: " userdir
+      if [ -z $userdir ];then
+        echo -e "${RED}Do not leave userdirectory blank!${NC}"
+        else break
+      fi
+    done
+    cd  /home/$userdir
+    if [[ $? -eq 0 ]];then
+      break
+    else echo -e "${RED}User home directory not recognised, try again.${NC}"
+    fi
+  done
+  while true;do
     read -p "Enter a git link for the TorQ repository you wish to clone or leave blank for default: " torq
     torq=${torq:-https://github.com/AquaQAnalytics/TorQ.git}
     if [[ $torq == *.git ]];then
@@ -30,7 +44,9 @@ Variables() {
     fi
   done
   echo -e "The TorQ FSP respository will come from ${GREEN}$torqfsp${NC}"
-  top=`pwd`
+  top=`pwd`/prodsupport
+  echo $top
+  echo `pwd`
  }
 
 VersionCheck() {
@@ -44,15 +60,22 @@ VersionCheck() {
  }
 
 Directory() {
+  if [ ! -d prodsupport ];then
+  mkdir prodsupport
+  echo "Directory created: prodsupport"
+  fi
+  cd prodsupport
   if [ ! -d v$versionfsp ];then
     newdir="v$versionfsp"
     mkdir "$newdir"
-    else echo -e "${RED}Directory v$versionfsp already exists${NC}"
+    else echo -e "${RED}Directory $newdir already exists${NC}"
     exit 1
   fi
   if [ ! -d logs ];then
     mkdir logs
   fi
+  cd $newdir
+  echo `pwd`
  }
 
 Navcheck() {
@@ -82,11 +105,14 @@ Navcheck() {
  }
 
 Navigate() {
-  base=`pwd`/$newdir
+  base=$top/$newdir
   cd $base
   Navcheck
-  cd $base
-  mv TorQ-Finance-Starter-Pack/hdb $top
+  cd $top
+echo `pwd`
+  if [ ! -d hdb ];then
+    mv $newdir/TorQ-Finance-Starter-Pack/hdb $top
+  fi
   while true;do
     read -p "Enter the name of directory you want to run the combined TorQ packages in, default is deploy: " direc
     direc=${direc:-deploy}
@@ -97,8 +123,21 @@ Navigate() {
     fi
   done
   mkdir $direc
-  cp -R `pwd`/TorQ/* $direc/
-  cp -R `pwd`/TorQ-Finance-Starter-Pack/* $direc/
+  cp -R $base/TorQ/* $direc/
+  cp -R $base/TorQ-Finance-Starter-Pack/* $direc/
+ }
+
+StartScript() {
+  cd $top
+  while true;do
+    read -p "Would you like to copy the most recent startup scripts to $base directory? y/n : " copyscript
+    if [[ $copyscript == y || $copyscript == n ]];then
+      break
+    fi
+  done
+  if [[ $copyscript == y ]];then
+    cp /home/prodsupport1/.startupscripts/* $base/
+  fi
  }
 
 Softlink() {
@@ -117,20 +156,6 @@ Softlink() {
   esac 
  }
 
-StartScript() {
-  cd $top
-  while true;do
-    read -p "Would you like to copy the v1.5.0 startup scripts to $base directory? y/n : " copyscript
-    if [[ $copyscript == y || $copyscript == n ]];then
-      break
-    fi
-  done
-  if [[ $copyscript == y ]];then
-    cp .startupscripts/* $base/
-  fi
-  
- }
-
 err_report() {
   echo -e "${RED}Error on line $1${NC}"
   exit 0
@@ -138,11 +163,3 @@ err_report() {
 
 trap 'err_report $LINENO' ERR
 
-#Colour
-#Usage $1
-#Variables
-#VersionCheck
-#Directory
-#Navigate
-#Softlink
-#StartScript
