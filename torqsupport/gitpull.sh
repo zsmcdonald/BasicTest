@@ -45,8 +45,6 @@ Variables() {
   done
   echo -e "The TorQ FSP respository will come from ${GREEN}$torqfsp${NC}"
   top=`pwd`/prodsupport
-  echo $top
-  echo `pwd`
  }
 
 VersionCheck() {
@@ -75,7 +73,6 @@ Directory() {
     mkdir logs
   fi
   cd $newdir
-  echo `pwd`
  }
 
 Navcheck() {
@@ -109,7 +106,6 @@ Navigate() {
   cd $base
   Navcheck
   cd $top
-echo `pwd`
   if [ ! -d hdb ];then
     mv $newdir/TorQ-Finance-Starter-Pack/hdb $top
   fi
