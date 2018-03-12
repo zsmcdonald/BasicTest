@@ -6,10 +6,6 @@ Colour() {
   GREEN='\033[0;32m'
  }
 
-Comparison() {
- printf "This is a file that contains the relevant TorQ Processes, it is called upon when a TorQ process is not found during comparison checks.\nThe discovery service process is no longer running.\nThe tickerplant process is no longer running.\nThe rdb process is no longer running.\nThe chained tickerplant process is no longer running.\nThe hdb1 process is no longer running.\nThe hdb2 process is no longer running.\nThe gateway process is no longer running.\nThe monitor process is no longer running.\nThe reporter process is no longer running.\nThe housekeeping process is no longer running.\nThe wdb1 process is no longer running.\nThe wdb2 process is no longer running.\nThe feed process is no longer running.\nThe iexfeed process is no longer running.\nThe wdb3 process is no longer running.\nThe wdb4 process is no longer running.\nThe metrics process is no longer running.\n" >Torqprocs.txt
- }
-
 User() {
   read -p "Enter the username(leave blank for current user) to track torq processes by said user: " user
   user=${user:-$USER}
@@ -52,7 +48,7 @@ TorQMonitor() {
   ps -aux | grep $user | grep "q.*torq" | awk '{for(i=0;i<NF;i++) if ($i=="-procname") print $(i+1)}' > trqdetails.txt
   time=`ps -aux | grep $user | grep "q.*torq" | sed -n "1p" | awk '{print $9}'`
   countline=`cat trqdetails.txt | wc -l`
-  if [[ $countline -eq 1  ]];then
+  if [[ $countline -eq 0  ]];then
     echo "No TorQ processes running for $user" > trqdetails.txt
     mail -s "TorQ Details" "$email" < trqdetails.txt
     echo -e "${RED}No TorQ processes found, an email alerting the user has been sent. Script will now exit as there is nothing to monitor.${NC}"
@@ -84,7 +80,6 @@ TorQMonitor() {
  }
 
 Colour
-Comparison
 User
 Sleepvar
 Email

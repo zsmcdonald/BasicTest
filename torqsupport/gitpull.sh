@@ -8,26 +8,13 @@ Colour() {
 
 Usage() {
   case $1 in 
-  "-u") printf "\n${RED}This script will download the TorQ basepack and TorQ Finance Starter Pack at specific version releases.\nTo leave variables as defaults, leave entries blank.${NC}\nDefaults in this script that can be changed are as follows:\nTorQ repository from: ${GREEN}https://github.com/AquaQAnalytics/TorQ.git${NC}\nTorQ FSP repository from: ${GREEN}https://github.com/AquaQAnalytics/TorQ-Finance-Starter-Pack.git${NC}\nDefault release version for TorQ: ${GREEN}3.1.2${NC}\nDefault release version for TorQ FSP: ${GREEN}1.5.0${NC}\nDefault directory both repositories they will be cloned from: ${GREEN}deploy${NC}\n\n";exit 0;;
+  "-u") printf "\n${RED}This script will download the TorQ basepack and TorQ Finance Starter Pack at specific version releases.\nTo leave variables as defaults, leave entries blank.${NC}\nDefaults in this script that can be changed are as follows:\nTorQ repository from: ${GREEN}https://github.com/AquaQAnalytics/TorQ.git${NC}\nTorQ FSP repository from: ${GREEN}https://github.com/AquaQAnalytics/TorQ-Finance-Starter-Pack.git${NC}\nDefault release version for TorQ FSP: ${GREEN}1.5.0${NC}\nDefault directory both repositories they will be cloned from: ${GREEN}deploy${NC}\n\n";exit 0;;
   *);;
   esac
  }
 
 Variables() {
-#  while true;do
-#    while true;do 
-#      read -p "Enter your username to create a prodsupport directory within your home directory: " userdir
-#      if [ -z $userdir ];then
-#        echo -e "${RED}Do not leave userdirectory blank!${NC}"
-#        else break
-#      fi
-#    done
-#    cd  /home/$userdir
-#    if [[ $? -eq 0 ]];then
-#      break
-#    else echo -e "${RED}User home directory not recognised, try again.${NC}"
-#    fi
-#  done
+  curdirec=`pwd`
   while true;do
     read -p "Enter a git link for the TorQ repository you wish to clone or leave blank for default: " torq
     torq=${torq:-https://github.com/AquaQAnalytics/TorQ.git}
@@ -44,7 +31,7 @@ Variables() {
     fi
   done
   echo -e "The TorQ FSP respository will come from ${GREEN}$torqfsp${NC}"
-  top=`pwd`/prodsupport
+  top=`pwd`/release
  }
 
 VersionCheck() {
@@ -58,13 +45,20 @@ VersionCheck() {
  }
 
 Directory() {
-  if [ ! -d prodsupport ];then
-  mkdir prodsupport
-  echo "Directory created: prodsupport"
+  if [ ! -d release ];then
+  mkdir release
+  echo "Directory created: release"
   fi
-  cd prodsupport
-  if [ ! -d v$versionfsp ];then
-    newdir="v$versionfsp"
+  cd release
+  while true;do
+    read -p "Enter a name for the directory that TorQ packages will be stored in: " newdir
+    if [ -z "$newdir" ];then
+      echo "You must enter a valid string that is a directory name that does not already exist!"
+    else
+      break
+    fi
+  done
+  if [ ! -d $newdir ];then
     mkdir "$newdir"
     else echo -e "${RED}Directory $newdir already exists${NC}"
     exit 1
@@ -133,7 +127,7 @@ StartScript() {
     fi
   done
   if [[ $copyscript == y ]];then
-    cp /home/prodsupport1/.startupscripts/* $base/
+    cp $curdirec/.startupscripts/* $base/
   fi
  }
 

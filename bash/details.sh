@@ -46,7 +46,7 @@ ProcDetails() {
 		fi
 	done	
 ps -aux | awk '{print $2 " " $11$12}' | grep "q.*$word" | awk '{print $1}' | xargs ps -o user,pid,ppid,c,stime,tty,stat,time,cmd ;;
-  *) ech1o "You should never receieve this error but if you have then you did not enter 1 or 2 when prompted to, do better next time" ;;
+  *) echo "You should never receieve this error but if you have then you did not enter 1 or 2 when prompted to, do better next time" ;;
   esac
  }
 
