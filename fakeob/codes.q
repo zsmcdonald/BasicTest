@@ -52,6 +52,12 @@ transactions:lj[transactions;newtab];
 / Update some typeCodes to only be negative if necessary
 update transactionAmount:neg transactionAmount from `transactions where typeCode in `BP`CG`CW`WD;
 
+
+
+/ Create year long date range
+dates:+[til 13;"m"$2016.01.01]
+test:1!(neg m)_(0!`customerID xasc 1!select customerID,accountNum from accounts) uj flip (`$ssr'[string[(+[til 12;"m"$2016.01.01])];".";"_"])!({1+ til m }each til 12)
+
 / Select all transactions for separate months
 month1:select from transactions where date within (2018.02.01;2018.02.28)
 month2:select from transactions where date within (2018.01.01;2018.01.31)
