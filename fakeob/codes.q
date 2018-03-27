@@ -30,7 +30,7 @@ a:((neg n)?1+til n)
 dID:(neg n*2)?(a,a)
 acIDs:{x,a[]}/[1;a[]]
 custIDs:{x,a[]}/[2;a[]]
-accounts1:([accountNum:(neg m-n)?1+ til (m-n);customerID:(acIDs)]bank:(n*2)?enlist `Danske;accountType:(n*2)?enlist `Current;currentBalance:(n*2)?800+ til 7000)
+accounts1:([accountNum:(neg m-n)? til (m-n);customerID:(acIDs)]bank:(n*2)?enlist `Danske;accountType:(n*2)?enlist `Current;currentBalance:(n*2)?800+ til 7000)
 accounts2:([accountNum:(neg n)?(m-n)+ til n;customerID:a]bank:n?enlist `Other;accountType:n?enlist `Current;currentBalance:n?800+ til 7000)
 accounts:`accountNum xasc accounts1,accounts2
 /update salary:?[1=deltas[customerID];1;0] from `customerID xasc `accounts;
@@ -41,7 +41,11 @@ transID:1+ til k
 sdate:2018.03.01
 dates:sdate-k?120
 times:k?.z.t
-transactions:([transactionID:transID]accountNumber:k?1+ til m;date:dates;time:times;transactionAmount:k?5+til 2500;typeCode:k?codes)
+transactions:([transactionID:transID]accountNum:k?til m;date:dates;time:times;transactionAmount:k?5+til 2500;typeCode:k?codes)
+cnt:select counts:count transactionID by accountNum from transactions;
+cnt:0!cnt lj 1!0!accounts;
+cnt:`accountNum`customerID`bank`accountType`currentBalance`counts xcols cnt;
+cnt:select sum counts by customerID from cnt;
 
 / Create ratio of negative transactions for specific typeCodes
 boo:(count select from transactions where typeCode in `BC`BD`SO`XF)?00000011b
@@ -51,8 +55,6 @@ transactions:lj[transactions;newtab];
 
 / Update some typeCodes to only be negative if necessary
 update transactionAmount:neg transactionAmount from `transactions where typeCode in `BP`CG`CW`WD;
-
-
 
 / Select all transactions for separate months
 month1:select from transactions where date within (2018.02.01;2018.02.28)
@@ -73,10 +75,10 @@ credit3:select from month3 where typeCode in `BC
 credit4:select from month3 where typeCode in `BC
 
 / End of month summaries 
-eom1:select by accountNumber from update eom:sum transactionAmount by accountNumber from month1
-eom2:select by accountNumber from update eom:sum transactionAmount by accountNumber from month2
-eom3:select by accountNumber from update eom:sum transactionAmount by accountNumber from month3
-eom4:select by accountNumber from update eom:sum transactionAmount by accountNumber from month4
+eom1:select by accountNum from update eom:sum transactionAmount by accountNum from month1
+eom2:select by accountNum from update eom:sum transactionAmount by accountNum from month2
+eom3:select by accountNum from update eom:sum transactionAmount by accountNum from month3
+eom4:select by accountNum from update eom:sum transactionAmount by accountNum from month4
 
 / Usage case 1 - Salary payment moves to non Dankse account
 / update Dec:?[1=deltas[customerID];1;0],Jan:?[1=deltas[customerID];1;0],Feb:?[1=deltas[customerID];1;0] from `customerID xasc `salary;
