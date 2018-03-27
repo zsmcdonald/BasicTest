@@ -54,10 +54,6 @@ update transactionAmount:neg transactionAmount from `transactions where typeCode
 
 
 
-/ Create year long date range
-dates:+[til 13;"m"$2016.01.01]
-test:1!(neg m)_(0!`customerID xasc 1!select customerID,accountNum from accounts) uj flip (`$ssr'[string[(+[til 12;"m"$2016.01.01])];".";"_"])!({1+ til m }each til 12)
-
 / Select all transactions for separate months
 month1:select from transactions where date within (2018.02.01;2018.02.28)
 month2:select from transactions where date within (2018.01.01;2018.01.31)
@@ -83,11 +79,12 @@ eom3:select by accountNumber from update eom:sum transactionAmount by accountNum
 eom4:select by accountNumber from update eom:sum transactionAmount by accountNumber from month4
 
 / Usage case 1 - Salary payment moves to non Dankse account
-salary:([accountNum:1+ til m;customerID:(custIDs)]Dec:1+ til m;Jan:1+ til m;Feb:1+ til m)
-update Dec:?[1=deltas[customerID];1;0],Jan:?[1=deltas[customerID];1;0],Feb:?[1=deltas[customerID];1;0] from `customerID xasc `salary;
-update Jan:0,Feb:0 from `salary where customerID in 8;
-update flag:?[2<=sum[Dec,Jan,Feb];`;`alert] by customerID from salary;
-
+/ salary:([accountNum:1+ til m;customerID:(custIDs)]Dec:1+ til m;Jan:1+ til m;Feb:1+ til m)
+/ update Dec:?[1=deltas[customerID];1;0],Jan:?[1=deltas[customerID];1;0],Feb:?[1=deltas[customerID];1;0] from `customerID xasc `salary;
+/ update Jan:0,Feb:0 from `salary where customerID in 8;
+/ update flag:?[2<=sum[Dec,Jan,Feb];`;`alert] by customerID from salary;
+salary:(0!`customerID xasc 1!select customerID,accountNum from accounts) uj flip  .Q.id'[+[til 12;"m"$.z.d]]!12#()
+{![`salary;();0b;(enlist x)!enlist (?;(=;1;(-':;`customerID));1;0)]}'[.Q.id'[+[til 12;"m"$.z.d]]];
 
 / Usage case 3 - EOM reduction of 20% over consecutive months
 eomchange:([accountNum:1+ til m]Dec:(m?-15 + til 40);Jan:(m?-15 + til 40);Feb:(m?-15 + til 40);March:(m?-15 + til 30))
