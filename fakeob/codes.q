@@ -83,7 +83,7 @@ eom4:select by accountNum from update eom:sum transactionAmount by accountNum fr
 / Usage case 1 - Salary payment moves to non Dankse account
 / update Dec:?[1=deltas[customerID];1;0],Jan:?[1=deltas[customerID];1;0],Feb:?[1=deltas[customerID];1;0] from `customerID xasc `salary;
 nu:(neg ceiling n*0.05)?n
-salary:(0!`customerID xasc 1!select customerID,accountNum from accounts) uj flip  .Q.id'[+[til 12;"m"$.z.d]]!12#()
+salary:2!(`customerID xasc select customerID,accountNum from accounts) uj flip  .Q.id'[+[til 12;"m"$2016.03.05]]!12#()
 {![`salary;();0b;(enlist x)!enlist (?;(=;1;(-':;`customerID));1;0)]}'[.Q.id'[+[til 12;"m"$.z.d]]];
 {update 1 rotate a201901,1 rotate a201902 by customerID from `salary where customerID in x}'[nu];
 
@@ -93,7 +93,13 @@ update Feb:-21,March:-20 from `eomchange where accountNum=13;
 
 
 
+/ Usage case 2 - Total transaction count falls by 20% over consecutive months
+totalcnt:1!(`customerID xasc select distinct customerID from accounts) uj flip  .Q.id'[+[til 12;"m"$2016.03.05]]!12#()
+update a201603:(exec counts from cnt) from `totalcnt;
+rnd:0.01*n?92+ til 18
+rnd2:0.01*n?90+ til 20
+rnd3:0.01*n?87+ til 23
+update a201604:(exec  *[a201603;rnd] from totalcnt) from `totalcnt;update a201605:(exec  *[a201604;rnd2] from totalcnt) from `totalcnt;update a201606:(exec  *[a201605;rnd3] from totalcnt) from `totalcnt;update a201607:(exec  *[a201606;rnd2] from totalcnt) from `totalcnt;update a201608:(exec  *[a201607;rnd] from totalcnt) from `totalcnt;update a201609:(exec  *[a201608;rnd3] from totalcnt) from `totalcnt;update a201610:(exec  *[a201609;rnd] from totalcnt) from `totalcnt;update a201611:(exec  *[a201610;rnd] from totalcnt) from `totalcnt;update a201612:(exec  *[a201611;rnd] from totalcnt) from `totalcnt;update a201701:(exec  *[a201612;rnd2] from totalcnt) from `totalcnt;update a201702:(exec  *[a201701;rnd3] from totalcnt) from `totalcnt;update a201703:(exec  *[a201702;rnd] from totalcnt) from `totalcnt;
 
-
-
+{![`totalcnt;();0b;(enlist x)!enlist ($;"i";x)]}'[1_cols totalcnt];
 
