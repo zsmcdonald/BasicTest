@@ -85,7 +85,7 @@ eom4:select by accountNum from update eom:sum transactionAmount by accountNum fr
 nu:(neg ceiling n*0.05)?n
 salary:2!(`customerID xasc select customerID,accountNum from accounts) uj flip  .Q.id'[+[til 12;"m"$2016.03.05]]!12#()
 {![`salary;();0b;(enlist x)!enlist (?;(=;1;(-':;`customerID));1;0)]}'[.Q.id'[+[til 12;"m"$.z.d]]];
-{update 1 rotate a201901,1 rotate a201902 by customerID from `salary where customerID in x}'[nu];
+{update 1 rotate a201703,1 rotate a201702 by customerID from `salary where customerID in x}'[nu];
 
 / Usage case 3 - EOM reduction of 20% over consecutive months
 eomchange:([accountNum:1+ til m]Dec:(m?-15 + til 40);Jan:(m?-15 + til 40);Feb:(m?-15 + til 40);March:(m?-15 + til 30))
