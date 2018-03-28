@@ -4,12 +4,9 @@
 
 param:.Q.def[(enlist `custs)!enlist 50] .Q.opt .z.x   
 
-origcodes:(`AP`BC`BD`BP`CG`CN`CQ`CR`CW`DC`DW`IC`MT`NC`SO`TP`UB`UD`US`WD`XF)!("FlexAccount linked Access Payment";"Bank Credit";"Direct Debit";"Bill Payment";"Charitable Giving";"Correction";"Credit by Cheque";"Credit by Cash";"Personal Cheque Withdrawal";"FlexAccount Payment Card Purchase/Credit Voucher";"FlexAccount Payment Card Visa Cash Withdrawal";"Interest/Charges";"Telephone Top-up";"Non cash";"Standing Order";"Credit/Debit (processed today)";"Unpaid Bill Payment";"Unpaid Direct Debit";"Unpaid Standing Order";"Withdrawal";"Transfer to/from another account")
+/origcodes:(`AP`BC`BD`BP`CG`CN`CQ`CR`CW`DC`DW`IC`MT`NC`SO`TP`UB`UD`US`WD`XF)!("FlexAccount linked Access Payment";"Bank Credit";"Direct Debit";"Bill Payment";"Charitable Giving";"Correction";"Credit by Cheque";"Credit by Cash";"Personal Cheque Withdrawal";"FlexAccount Payment Card Purchase/Credit Voucher";"FlexAccount Payment Card Visa Cash Withdrawal";"Interest/Charges";"Telephone Top-up";"Non cash";"Standing Order";"Credit/Debit (processed today)";"Unpaid Bill Payment";"Unpaid Direct Debit";"Unpaid Standing Order";"Withdrawal";"Transfer to/from another account")
 coded:(`BC`BD`BP`CG`CN`CW`IC`SO`WD`XF)!("Bank Credit";"Direct Debit";"Bill Payment";"Charitable Giving";"Correction";"Personal Cheque Withdrawal";"Interest Charge";"Standing Order";"Withdrawal";"Transfer to/from another account")
 codes:(key coded) where 5 20 7 1 2 2 1 5 7 5  
-/Bank products are currency account, credit, savings, internet banking, mobile banking, SMS, standing orders, etc
-
-
 / reftranstype: enlist codes
 
 / Semi-random data input to create table of customerID and addresses
@@ -33,7 +30,6 @@ custIDs:{x,a[]}/[2;a[]]
 accounts1:([accountNum:(neg m-n)? til (m-n);customerID:(acIDs)]bank:(n*2)?enlist `Danske;accountType:(n*2)?enlist `Current;currentBalance:(n*2)?800+ til 7000)
 accounts2:([accountNum:(neg n)?(m-n)+ til n;customerID:a]bank:n?enlist `Other;accountType:n?enlist `Current;currentBalance:n?800+ til 7000)
 accounts:`accountNum xasc accounts1,accounts2
-/update salary:?[1=deltas[customerID];1;0] from `customerID xasc `accounts;
 
 / Create transaction table, 
 k:80*param`custs
@@ -87,12 +83,6 @@ salary:2!(`customerID xasc select customerID,accountNum from accounts) uj flip  
 {![`salary;();0b;(enlist x)!enlist (?;(=;1;(-':;`customerID));1;0)]}'[.Q.id'[+[til 12;"m"$2016.03.05]]];
 {update 1 rotate a201702,1 rotate a201701 by customerID from `salary where customerID in x}'[nu];
 
-/ Usage case 3 - EOM reduction of 20% over consecutive months
-eomchange:([accountNum:1+ til m]Dec:(m?-15 + til 40);Jan:(m?-15 + til 40);Feb:(m?-15 + til 40);March:(m?-15 + til 30))
-update Feb:-21,March:-20 from `eomchange where accountNum=13;
-
-
-
 / Usage case 2 - Total transaction count falls by 20% over consecutive months
 totalcnt:1!(`customerID xasc select distinct customerID from accounts) uj flip  .Q.id'[+[til 12;"m"$2016.03.05]]!12#()
 update a201603:(exec counts from cnt) from `totalcnt;
@@ -101,3 +91,7 @@ rnd2:0.01*n?90+ til 20
 rnd3:0.01*n?87+ til 23
 {[x;y]![`totalcnt;();0b;(enlist x)!enlist(?;`totalcnt;();();enlist(*;y;`rnd))]}'[2_cols totalcnt;-1_1_cols totalcnt];
 {![`totalcnt;();0b;(enlist x)!enlist ($;"i";x)]}'[1_cols totalcnt];
+
+/ Usage case 3 - EOM reduction of 20% over consecutive months
+eomchange:([accountNum:1+ til m]Dec:(m?-15 + til 40);Jan:(m?-15 + til 40);Feb:(m?-15 + til 40);March:(m?-15 + til 30))
+update Feb:-21,March:-20 from `eomchange where accountNum=13;
