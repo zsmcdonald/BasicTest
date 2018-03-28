@@ -140,7 +140,8 @@ Softlink() {
     fi
   done  
   case $choice in 
-  "y") ln -s $base current
+  "y") rm -f current
+       ln -s $base current
        echo "Softlink updated" ;;
   "n") echo "Softlink has not been updated" ;;
   *) echo "This option should not appear" ;;
