@@ -1,6 +1,8 @@
 #!/bin/bash
 echo "This script will continue running until stopped - CRTL+C can be used to stop this in the console"
 read -p "Enter a number (with an s suffix for seconds) to loop the script at set time intervals:" slp 
+slp=${slp:-60}
+echo "Sleep interval set as $slp second(s)"
 
 while [ 1 ]
 do

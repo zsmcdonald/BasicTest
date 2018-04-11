@@ -4,7 +4,7 @@
 
 param:.Q.def[(enlist `custs)!enlist 50] .Q.opt .z.x   
 
-/origcodes:(`AP`BC`BD`BP`CG`CN`CQ`CR`CW`DC`DW`IC`MT`NC`SO`TP`UB`UD`US`WD`XF)!("FlexAccount linked Access Payment";"Bank Credit";"Direct Debit";"Bill Payment";"Charitable Giving";"Correction";"Credit by Cheque";"Credit by Cash";"Personal Cheque Withdrawal";"FlexAccount Payment Card Purchase/Credit Voucher";"FlexAccount Payment Card Visa Cash Withdrawal";"Interest/Charges";"Telephone Top-up";"Non cash";"Standing Order";"Credit/Debit (processed today)";"Unpaid Bill Payment";"Unpaid Direct Debit";"Unpaid Standing Order";"Withdrawal";"Transfer to/from another account")
+/ origcodes:(`AP`BC`BD`BP`CG`CN`CQ`CR`CW`DC`DW`IC`MT`NC`SO`TP`UB`UD`US`WD`XF)!("FlexAccount linked Access Payment";"Bank Credit";"Direct Debit";"Bill Payment";"Charitable Giving";"Correction";"Credit by Cheque";"Credit by Cash";"Personal Cheque Withdrawal";"FlexAccount Payment Card Purchase/Credit Voucher";"FlexAccount Payment Card Visa Cash Withdrawal";"Interest/Charges";"Telephone Top-up";"Non cash";"Standing Order";"Credit/Debit (processed today)";"Unpaid Bill Payment";"Unpaid Direct Debit";"Unpaid Standing Order";"Withdrawal";"Transfer to/from another account")
 coded:(`BC`BD`BP`CG`CN`CW`IC`SO`WD`XF)!("Bank Credit";"Direct Debit";"Bill Payment";"Charitable Giving";"Correction";"Personal Cheque Withdrawal";"Interest Charge";"Standing Order";"Withdrawal";"Transfer to/from another account")
 codes:(key coded) where 5 20 7 1 2 2 1 5 7 5  
 / reftranstype: enlist codes
@@ -34,7 +34,7 @@ accounts:`accountNum xasc accounts1,accounts2
 / Create transaction table, 
 k:80*param`custs
 transID:1+ til k
-sdate:2018.03.01
+sdate:2018.02.28
 dates:sdate-k?120
 times:k?.z.t
 transactions:([transactionID:transID]accountNum:k?til m;date:dates;time:times;transactionAmount:k?5+til 2500;typeCode:k?codes)
