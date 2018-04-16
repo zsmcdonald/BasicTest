@@ -1,0 +1,12 @@
+#column -s"|" -t
+pos|team|pld|pts
+1|leicester|31|66
+2|tottenham|31|61
+3|arsenal|30|55
+4|man city|30|51
+5|west ham|30|50
+6|man utd|30|50
+7|southampton|31|47
+8|stoke city|31|46
+9|liverpool|29|44
+10|Chelsea|30|41

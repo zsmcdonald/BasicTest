@@ -20,8 +20,7 @@ echo -e "Checking between ${RED}$port1${NC} and ${RED}$port2${NC}"
  }
 
 AltNetstat() {
-rng=`seq $port1 $port2 | tr '\n' '|' | sed 's/.*/"&"/'`
-echo $rng
+rng=`seq $port1 $port2 | tr '\n' '|' | head -c-1 | sed 's/.*/"&"/'`
 netstat -tulpn | grep -E $rng
  }
 
