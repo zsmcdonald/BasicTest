@@ -75,7 +75,7 @@ EURData()
 {
   eurprice=`curl -s https://www.poundsterlinglive.com/data/currencies/eur-pairs/EURGBP-exchange-rate | sed -n "201p" | head -c-6`
   echo -e "The EUR/GBP exchange rate is currently ${RED}$eurprice${NC}"
-  eurperc=`curl -s https://www.poundsterlinglive.com/data/currencies/eur-pairs/EURGBP-exchange-rate/ | sed -n "215p"`
+  eurperc=`curl -s https://www.poundsterlinglive.com/data/currencies/eur-pairs/EURGBP-exchange-rate | sed -n "215p"`
  	if [[ $eurperc = *"green"* ]];then
 	eurperc1=`echo $eurperc | cut -c27- | head -c -14`
 	echo -e "The percentage change from yesterday is ${GREEN}$eurperc1${NC}"

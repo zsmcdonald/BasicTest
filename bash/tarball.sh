@@ -10,5 +10,5 @@ if [ -f $name.tar.gz ];then
 else
 	echo "File name not in use, backup will be saved as $name.tar.gz"
 fi
-find /home/$USER -type f -mtime 1 | xargs tar -cvzf "$name".tar.gz 
+find /home/$USER -type f -mtime 1 | xargs -r tar -cvzf "$name".tar.gz 
 
