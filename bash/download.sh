@@ -8,9 +8,9 @@ while [ 1 ]
 do
 wget -O FDdownload.txt -q  "https://uk.finance.yahoo.com/quote/FDP.L?p=FDP.L" 
 #echo $data
-grep -ozP '(?s)<!-- react-text: 36 -->\K.*?(?=<!-- /react-text -)' FDdownload.txt | tr -cd  '[0987654321.,]' >> FDprice.txt
-echo "       Time: $(date)" >> FDprice.txt
-echo "" >> FDprice.txt
+grep -ozP '(?s)<!-- react-text: 36 -->\K.*?(?=<!-- /react-text -)' FDdownload.txt | tr -cd  '[0987654321.,]' | tee -a FDprice.txt
+echo "       Time: $(date)" | tee -a FDprice.txt
+echo "" | tee -a FDprice.txt
 sleep $slp
 done
 
