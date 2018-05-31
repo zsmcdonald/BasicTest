@@ -7,7 +7,7 @@ start:.z.p
 
 / Load in market data - TEMPORARILY SHORTENED DATE RANGE FOR TESTING
 \l deploy/fxhdb
-tab:select from gainfx where date within (2017.02.06;2017.02.12)
+tab:select from gainfx where date within (2017.02.01;2017.02.28)
 update RateMid:0.5*RateAsk+RateBid from `tab;update upp:RateAsk-RateMid from `tab;update down:RateBid-RateMid from `tab;
 
 
@@ -26,9 +26,9 @@ highd:(0.00001*("j"$0.002*nu)?100017+ til 10),0.00001*("j"$0.003*nu)?99974+ til 
 
 
 / Variance table fields
-reg:(3?enlist `AMS),(2?enlist `EUR),(2?enlist `APAC),(1?enlist `OTHER)
+reg:(7?enlist `AMS),(5?enlist `EUR),(4?enlist `APAC),(2?enlist `OTHER)
 / Alert Type - always variance
-alertt:(8?enlist `variance),(2?enlist `washing),(2?enlist `crossing),(1?enlist `highorderates),(1?enlist `spoofing) 
+alertt:(8?enlist `Variance),(2?enlist`Washing),(2?enlist `Crossing),(1?enlist `HighOrderRates),(1?enlist `Spoofing) 
 
 
 / Trader details
@@ -58,26 +58,28 @@ delete nprice,cond from `testt;
 
 
 / Generate alerts table
-ltt:(10?enlist `Closed),(3?enlist `InProgress),(2?enlist `Open),(2?enlist `Resolved),(1?enlist `STJ)
+ltt:(10?enlist `Closed),(3?enlist `InProgress),(2?enlist `Open),(1?enlist `Escalated)
 rm:exec RateMid from testt where dprice>0
 dp:exec dprice from testt where dprice>0
 update perc:100*(dp-rm)%rm from `testt where dprice>0;
 szal:(4?enlist 1000000),(3?enlist 2000000),(2?enlist 3500000),(1?enlist 5000000),(1?enlist 6500000)
 update orsize:c?szal from `testt where not null dprice;
 update score:floor abs (perc*orsize)%150 from `testt where not null dprice;
+update desk:`EUR from `testt where CurrencyPair like "EUR*";update desk:`USD from `testt where CurrencyPair like "USD*";update desk:`GBP from `testt where CurrencyPair like "GBP*";
 
-
-alts:select exID,time,CurrencyPair,dprice,perc,score from testt where not null dprice,score>=220;update alID:i from `alts;
+alts:select exID,time,CurrencyPair,desk,dprice,perc,score from testt where not null dprice,score>=220;update alID:i from `alts;
 cla:count alts;
 /jid:(neg cla)?"SA-",/:string 1+ til cla
 jid:"S"$("SA-",/:string 1+ til cla)
 update TraderName:cla?key trad,size:cla?szal from `alts;update TraderID:trad[TraderName] from `alts;update status:cla?ltt from `alts;update region:cla?reg from `alts;update alerttype:cla?alertt from `alts;update JID:jid from `alts;
 
 
-alerts:select from alts where alerttype in `variance
-alerts:`alID`exID`status`time`TraderName`TraderID`region`alerttype`CurrencyPair`dprice`perc`size xcols alerts;
-update comm:("Trader ",/:TraderName,'" was responsible for this ",/:(string upper [alerttype]),'" error on ",/:string[time.date],'".",'" At time ",/:string[time.time],'", CurrencyPair ",/:string[CurrencyPair],'" was traded at ",/:string[perc],\:" percent from the mid.") from `alerts;
-a7:select count exID by 30 xbar time.minute from alerts
+/alerts:select from alts where alerttype in `Variance
+/alerts:`alID`exID`status`time`TraderName`TraderID`region`alerttype`CurrencyPair`desk`dprice`perc`size xcols alerts;
+alts:`alID`exID`status`time`TraderName`TraderID`region`alerttype`CurrencyPair`desk`dprice`perc`size xcols alts;
+/update comm:("Trader ",/:TraderName,'" was responsible for this ",/:(string upper [alerttype]),'" error on ",/:string[time.date],'".",'" At time ",/:string[time.time],'", CurrencyPair ",/:string[CurrencyPair],'" was traded at ",/:string[perc],\:" percent from the mid.") from `alerts;
+update comm:("Trader ",/:TraderName,'" was responsible for this ",/:(string upper [alerttype]),'" error on ",/:string[time.date],'".",'" At time ",/:string[time.time],'", CurrencyPair ",/:string[CurrencyPair],'" was traded at ",/:string[perc],\:" percent from the mid.") from `alts;
+/a7:select count exID by 30 xbar time.minute from alts
 / Breakdown of alerttype type count by day. Lower alert count on Sundays, no data on Saturdays
 timebrk:0!select IDcnt:count exID by time.date,alerttype from alts;update IDcnt:floor 0.6*IDcnt from `timebrk where 6=date mod 7;
 
@@ -85,10 +87,20 @@ timebrk:0!select IDcnt:count exID by time.date,alerttype from alts;update IDcnt:
 / Table for trader monitoring
 / Number of alerts per day
 numal:35*count exec distinct date from tab
-talert:(1?enlist"Creation of a Floor/Ceiling";1?enlist"Smoking";1?enlist"Pinging";1?enlist"Pump and Dump";1?enlist"Marking the Close";1?enlist"Pre-arranged Trade";1?enlist"Wash Trading";1?enlist"Abnormal Spread")
+talert:((1?enlist "Creation of a Floor/Ceiling"),(1?enlist "Smoking"),(1?enlist "Pinging"),(1?enlist "Pump and Dump"),(1?enlist "Marking the Close"),(1?enlist "Pre-arranged Trade"),(1?enlist "Wash Trading"),(4?enlist "Variance"))
 calert:(1?enlist`Insider;1?enlist`BadLanguage;1?enlist`Collusive;1?enlist`Emotion;1?enlist`FrontRunning;1?enlist`Apologetic;1?enlist`Controls;1?enlist`Anger;1?enlist`Fear;1?enlist`Racist;1?enlist`Sexist;1?enlist`Illegal;1?enlist`Pressure;1?enlist`VolumeSpike;1?enlist`RadioSilence;1?enlist`SwapChannel)
+/alerthistory:([]date:asc (neg numal)?(exec time from testt);TraderName:numal?key trad;TradeAlert:numal?talert)
 alerthistory:([]date:asc numal?(exec distinct date from tab);TraderName:numal?key trad;TradeAlert:numal?talert)
-update TraderID:trad[TraderName] from `alerthistory;update ID:i from `alerthistory
+update TraderID:trad[TraderName] from `alerthistory;update ID:i from `alerthistory;
+
+numcom:8*count exec distinct date from tab
+talcom:(1?enlist"Creation of a Floor/Ceiling";1?enlist"Smoking";1?enlist"Pinging";1?enlist"Pump and Dump";1?enlist"Marking the Close";1?enlist"Pre-arranged Trade";1?enlist"Wash Trading";1?enlist"Abnormal Spread")
+/commsalert:([]date:asc (neg numcom)?(exec time from testt);TraderName:numcom?key trad;TradeAlert:numcom?calert)
+commsalert:([]date:asc numcom?(exec distinct date from tab);TraderName:numcom?key trad;TradeAlert:numcom?calert)
+update TraderID:trad[TraderName] from `commsalert;update ID:i from `commsalert;
+
+/update JID:`$"SA-14" from `alerts where exID = 5954;update JID:`$"SA-212" from `alerts where exID = 317;update JID:`$"SA-15" from `alerts where exID = 24789;update JID:`$"SA-44" from `alerts where exID = 336;update JID:`$"SA-17" from `alerts where exID = 2528;update JID:`$"SA-86" from `alerts where exID = 406;
+update JID:`$"SA-14" from `alts where exID = 5954;update JID:`$"SA-212" from `alts where exID = 317;update JID:`$"SA-15" from `alts where exID = 24789;update JID:`$"SA-44" from `alts where exID = 336;update JID:`$"SA-17" from `alts where exID = 2528;update JID:`$"SA-86" from `alts where exID = 406;
 
 
 .z.p-start
