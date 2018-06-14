@@ -79,28 +79,27 @@ update TraderName:cla?key trad,size:cla?szal from `alts;update TraderID:trad[Tra
 alts:`alID`exID`status`time`TraderName`TraderID`region`alerttype`CurrencyPair`desk`dprice`perc`size xcols alts;
 /update comm:("Trader ",/:TraderName,'" was responsible for this ",/:(string upper [alerttype]),'" error on ",/:string[time.date],'".",'" At time ",/:string[time.time],'", CurrencyPair ",/:string[CurrencyPair],'" was traded at ",/:string[perc],\:" percent from the mid.") from `alerts;
 update comm:("Trader ",/:TraderName,'" was responsible for this ",/:(string upper [alerttype]),'" error on ",/:string[time.date],'".",'" At time ",/:string[time.time],'", CurrencyPair ",/:string[CurrencyPair],'" was traded at ",/:string[perc],\:" percent from the mid.") from `alts;
-/a7:select count exID by 30 xbar time.minute from alts
 / Breakdown of alerttype type count by day. Lower alert count on Sundays, no data on Saturdays
 timebrk:0!select IDcnt:count exID by time.date,alerttype from alts;update IDcnt:floor 0.6*IDcnt from `timebrk where 6=date mod 7;
 
 
 / Table for trader monitoring
 / Number of alerts per day
-numal:35*count exec distinct date from tab
+numal:70*count exec distinct date from tab
 talert:((1?enlist "Creation of a Floor/Ceiling"),(1?enlist "Smoking"),(1?enlist "Pinging"),(1?enlist "Pump and Dump"),(1?enlist "Marking the Close"),(1?enlist "Pre-arranged Trade"),(1?enlist "Wash Trading"),(4?enlist "Variance"))
-calert:(1?enlist`Insider;1?enlist`BadLanguage;1?enlist`Collusive;1?enlist`Emotion;1?enlist`FrontRunning;1?enlist`Apologetic;1?enlist`Controls;1?enlist`Anger;1?enlist`Fear;1?enlist`Racist;1?enlist`Sexist;1?enlist`Illegal;1?enlist`Pressure;1?enlist`VolumeSpike;1?enlist`RadioSilence;1?enlist`SwapChannel)
-/alerthistory:([]date:asc (neg numal)?(exec time from testt);TraderName:numal?key trad;TradeAlert:numal?talert)
+calert:(1?enlist`Insider;1?enlist`BadLanguage;1?enlist`Collusive;1?enlist`Emotion;1?enlist`FrontRunning;1?enlist`Apologetic;1?enlist`Controls;1?enlist`Anger;1?enlist`Fear;1?enlist`Illegal;1?enlist`Pressure;1?enlist`VolumeSpike;1?enlist`RadioSilence;1?enlist`SwapChannel)
 alerthistory:([]date:asc numal?(exec distinct date from tab);TraderName:numal?key trad;TradeAlert:numal?talert)
 update TraderID:trad[TraderName] from `alerthistory;update ID:i from `alerthistory;
 
-numcom:8*count exec distinct date from tab
+numcom:24*count exec distinct date from tab
 talcom:(1?enlist"Creation of a Floor/Ceiling";1?enlist"Smoking";1?enlist"Pinging";1?enlist"Pump and Dump";1?enlist"Marking the Close";1?enlist"Pre-arranged Trade";1?enlist"Wash Trading";1?enlist"Abnormal Spread")
 /commsalert:([]date:asc (neg numcom)?(exec time from testt);TraderName:numcom?key trad;TradeAlert:numcom?calert)
 commsalert:([]date:asc numcom?(exec distinct date from tab);TraderName:numcom?key trad;TradeAlert:numcom?calert)
 update TraderID:trad[TraderName] from `commsalert;update ID:i from `commsalert;
 
-/update JID:`$"SA-14" from `alerts where exID = 5954;update JID:`$"SA-212" from `alerts where exID = 317;update JID:`$"SA-15" from `alerts where exID = 24789;update JID:`$"SA-44" from `alerts where exID = 336;update JID:`$"SA-17" from `alerts where exID = 2528;update JID:`$"SA-86" from `alerts where exID = 406;
-update JID:`$"SA-14" from `alts where exID = 5954;update JID:`$"SA-212" from `alts where exID = 317;update JID:`$"SA-15" from `alts where exID = 24789;update JID:`$"SA-44" from `alts where exID = 336;update JID:`$"SA-17" from `alts where exID = 2528;update JID:`$"SA-86" from `alts where exID = 406;
 
+update JID:`$"SA-14" from `alts where exID = 46204;update JID:`$"SA-1743" from `alts where exID = 4747;update JID:`$"SA-15" from `alts where exID = 12108;update JID:`$"SA-495" from `alts where exID = 490;update JID:`$"SA-17" from `alts where exID = 36256;update JID:`$"SA-1364" from `alts where exID = 514;
 
+\l profile
+.Q.gc[]
 .z.p-start
